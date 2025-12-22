@@ -33,16 +33,16 @@ module.exports = {
       const scale = scales.find(s => amount >= s.value);
       if (scale) {
         const scaledValue = amount / scale.value;
-        return ${scale.color}${scaledValue.toFixed(2)}${scale.suffix};
+        return `${scale.color}${scaledValue.toFixed(2)}${scale.suffix}`;
       }
-      return💲${amount.toLocaleString()}`;
+      return `💲${amount.toLocaleString()}`;
     };
 
     if (isNaN(bet) || bet <= 0)
       return message.reply("🔴 ERROR: Please enter a valid bet amount!");
 
     if (bet > MAX_BET)
-      return message.reply🚫 MAX BET LIMIT: You can bet up to ${formatMoney(MAX_BET)} only.`);
+      return message.reply(`🚫 MAX BET LIMIT: You can bet up to ${formatMoney(MAX_BET)} only.`);
 
     const user = await usersData.get(senderID);
 
@@ -60,11 +60,11 @@ module.exports = {
     const currentCount = isSameDay ? playCount : 0;
 
     if (currentCount >= DAILY_LIMIT) {
-      return message.reply(⏳ DAILY LIMIT: You can only play ${DAILY_LIMIT} times per day. Try again tomorrow (Bangladesh time)!);
+      return message.reply(`⏳ DAILY LIMIT: You can only play ${DAILY_LIMIT} times per day. Try again tomorrow (Bangladesh time)!`);
     }
 
     if (user.money < bet)
-      return message.reply🔴 INSUFFICIENT FUNDS: You need ${formatMoney(bet - user.money)} more to play!`);
+      return message.reply(`🔴 INSUFFICIENT FUNDS: You need ${formatMoney(bet - user.money)} more to play!`);
 
     const symbols = [
       { emoji: "🍒", weight: 30 },
@@ -127,26 +127,26 @@ module.exports = {
     });
 
     const slotBox =
-      "╔═════════════════════╗\n" +
-      "║  🎰 SLOT MACHINE 🎰  ║\n" +
-      "╠═════════════════════╣\n" +
-      ║     [ ${slot1} | ${slot2} | ${slot3} ]     ║\n +
-      "╚═════════════════════╝";
+      "╔════════════════╗\n" +
+      "║  🎰 SLOT MACHINE 🎰  \n" +
+      "╠════════════════╣\n" +
+      `║     [ ${slot1} | ${slot2} | ${slot3} ]     \n` +
+      "╚════════════════╝";
 
     const resultColor = winnings >= 0 ? "🟢" : "🔴";
     const resultText = winnings >= 0
-      ?🏆 WON: ${formatMoney(winnings)}`
-      :💸 LOST: ${formatMoney(bet)}`;
+      ? `🏆 WON: ${formatMoney(winnings)}`
+      : `💸 LOST: ${formatMoney(bet)}`;
 
     const messageContent =
-     ${slotBox}\n\n` +
-     🎯 RESULT: ${outcome}\n` +
-      ${winType ? `${winType}\n : ""}` +
-      ${bonus ? `${bonus}\n : ""}` +
-      \n${resultColor} ${resultText} +
-     \n💰 BALANCE: ${formatMoney(newBalance)}` +
-     \n🧮 SPINS USED TODAY: ${currentCount + 1}/${DAILY_LIMIT}` +
-     \n\n💡 TIP: Higher bets increase jackpot chances!`;
+      `${slotBox}\n\n` +
+      `🎯 RESULT: ${outcome}\n` +
+      `${winType ? `${winType}\n` : ""}` +
+      `${bonus ? `${bonus}\n` : ""}` +
+      `\n${resultColor} ${resultText}` +
+      `\n💰 BALANCE: ${formatMoney(newBalance)}` +
+      `\n🧮 SPINS USED TODAY: ${currentCount + 1}/${DAILY_LIMIT}` +
+      `\n\n💡 TIP: Higher bets increase jackpot chances!`;
 
     return message.reply(messageContent);
   }
