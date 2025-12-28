@@ -4,7 +4,7 @@ module.exports = {
   config: {
     name: "info",
     version: "2.5.3",
-    author: "ST | Sheikh Tamim",
+    author: "ST | Sheikh Tamim (Fix by Sanjida Snigdha)",
     role: 0,
     countDown: 20,
     shortDescription: {
@@ -21,27 +21,30 @@ module.exports = {
 
   onStart: async function ({ message }) {
 
+    // OWNER INFO
     const ownerName = "Muhammad Sou Rav";
     const ownerAge = "17";
     const ownerFB = "https://www.facebook.com/MuhammadSourav10";
     const ownerNumber = "+88013XXXXXXX";
     const status = "Active";
 
+    // BOT INFO
     const botName = global.GoatBot?.config?.nickNameBot || "GoatBot";
     const prefix = global.GoatBot?.config?.prefix || "/";
-
-    // 🧠 TOTAL COMMANDS
     const totalCommands = global.GoatBot?.commands?.size || 0;
 
+    // GIF / VIDEO URL
     const images = [
-      "https://i.ibb.co/SD8SDxRp/597419756-1433777018750185-6513158348709492396-n-jpg-nc-cat-103-ccb-1-7-nc-sid-9f807c-nc-eui2-Ae-F.jpg"
+      "https://files.catbox.moe/ml9pqy.mp4"
     ];
     const image = images[Math.floor(Math.random() * images.length)];
 
+    // DATE & TIME
     const now = moment().tz("Asia/Dhaka");
     const date = now.format("MMMM Do YYYY");
     const time = now.format("h:mm:ss A");
 
+    // UPTIME
     const uptime = process.uptime();
     const days = Math.floor(uptime / 86400);
     const hours = Math.floor((uptime % 86400) / 3600);
@@ -49,6 +52,7 @@ module.exports = {
     const seconds = Math.floor(uptime % 60);
     const uptimeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
 
+    // SEND MESSAGE
     return message.reply({
       body: `
 ╔═《 ✨ 𝗢𝗪𝗡𝗘𝗥 & 𝗕𝗢𝗧 𝗜𝗡𝗙𝗢 ✨ 》═╗
@@ -66,6 +70,8 @@ module.exports = {
 ⭓ 📱 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽  : 『 ${ownerNumber} 』
 ⭓ 🌐 𝗙𝗮𝗰𝗲𝗯𝗼𝗼𝗸  : 『 ${ownerFB} 』
 
+───────────────
+🔧 Fix by Sanjida Snigdha
 ╚══════════════════════════╝
 `,
       attachment: await global.utils.getStreamFromURL(image)
