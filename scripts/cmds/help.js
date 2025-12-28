@@ -1,10 +1,12 @@
 const axios = require("axios");
-const { getPrefix } = global.utils;
+const { getPrefix, getStreamFromURL } = global.utils;
 const { commands } = global.GoatBot;
 
 let xfont = null;
 let yfont = null;
 let categoryEmoji = null;
+
+const HELP_GIF = "https://files.catbox.moe/8bkrn1.gif";
 
 /* ───── Load Fonts & Emoji ───── */
 async function loadResources() {
@@ -96,7 +98,10 @@ module.exports = {
       msg += `🔢 Total: ${categories[cat].length}\n`;
       msg += `⚡ Prefix: ${prefix}`;
 
-      return message.reply(msg);
+      return message.reply({
+        body: msg,
+        attachment: await getStreamFromURL(HELP_GIF)
+      });
     }
 
     /* ───── Main Menu ───── */
@@ -116,7 +121,10 @@ module.exports = {
       msg += `⚡ Prefix: ${prefix}\n`;
       msg += `👑 Owner: Sourav`;
 
-      return message.reply(msg);
+      return message.reply({
+        body: msg,
+        attachment: await getStreamFromURL(HELP_GIF)
+      });
     }
 
     /* ───── Command Info ───── */
@@ -151,6 +159,9 @@ module.exports = {
 📖 Usage : ${usage}
 ╰───────────────────╯`;
 
-    return message.reply(msg);
+    return message.reply({
+      body: msg,
+      attachment: await getStreamFromURL(HELP_GIF)
+    });
   }
 };
