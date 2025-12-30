@@ -1,5 +1,6 @@
 const Canvas = require("canvas");
 const { uploadZippyshare } = global.utils;
+const axios = require("axios"); // Add axios import
 
 const defaultFontName = "BeVietnamPro-SemiBold";
 const defaultPathFontName = `${__dirname}/assets/font/BeVietnamPro-SemiBold.ttf`;
@@ -21,17 +22,17 @@ global.client.makeRankCard = makeRankCard;
 module.exports = {
 	config: {
 		name: "rank",
-		version: "1.7",
-		author: "NTKhang",
+		version: "1.8",
+		author: "NTKhang", // pp fix by Eren
 		countDown: 5,
 		role: 0,
 		description: {
-			vi: "Xem level của bạn hoặc người được tag. Có thể tag nhiều người",
+			vi: "Xem level cá»§a báº¡n hoáº·c ngÆ°á»i Ä‘Æ°á»£c tag. CÃ³ thá»ƒ tag nhiá»u ngÆ°á»i",
 			en: "View your level or the level of the tagged person. You can tag many people"
 		},
 		category: "rank",
 		guide: {
-			vi: "   {pn} [để trống | @tags]",
+			vi: "   {pn} [Ä‘á»ƒ trá»‘ng | @tags]",
 			en: "   {pn} [empty | @tags]"
 		},
 		envConfig: {
@@ -84,6 +85,26 @@ const defaultDesignCard = {
 	text_color: "#000000"
 };
 
+// SAME FUNCTION as in other commands
+const getAvatar = async (userID) => {
+	try {
+		const avatarURL = `https://graph.facebook.com/${userID}/picture?width=720&height=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;
+		const finalAvatarURL = avatarURL + (avatarURL.includes("?") ? "&" : "?") + `t=${Date.now()}`;
+		
+		const response = await axios.get(finalAvatarURL, { 
+			responseType: "arraybuffer",
+			timeout: 15000,
+			headers: { "User-Agent": "Mozilla/5.0" }
+		});
+		
+		return `data:image/jpeg;base64,${Buffer.from(response.data).toString('base64')}`;
+	} catch (error) {
+		console.error(`Error fetching avatar for ${userID}:`, error.message);
+		// Return a fallback URL
+		return `https://graph.facebook.com/${userID}/picture?width=720&height=720`;
+	}
+};
+
 async function makeRankCard(userID, usersData, threadsData, threadID, deltaNext, api = global.GoatBot.fcaApi) {
 	const { exp } = await usersData.get(userID);
 	const levelUser = expToLevel(exp, deltaNext);
@@ -102,7 +123,7 @@ async function makeRankCard(userID, usersData, threadsData, threadID, deltaNext,
 		name: allUser[rank - 1].name,
 		rank: `#${rank}/${allUser.length}`,
 		level: levelUser,
-		avatar: await usersData.getAvatarUrl(userID)
+		avatar: await getAvatar(userID) // Use the same function here
 	};
 
 	const configRankCard = {
@@ -619,7 +640,7 @@ class RankCard {
 		const xyAvatar = heightCard / 2;
 		const resizeAvatar = 60 * percentage(heightCard);
 
-		// Kẽ đường ngang ở giữa
+		// Káº½ Ä‘Æ°á»ng ngang á»Ÿ giá»¯a
 		// Draw a horizontal line in the middle
 		const widthLineBetween = 58 * percentage(widthCard);
 		const heightLineBetween = 2 * percentage(heightCard);
@@ -667,7 +688,7 @@ class RankCard {
 			ctx.rect(xyAvatar + resizeAvatar / 2, heightCard / 2 - heightLineBetween / 2, widthLineBetween, heightLineBetween);
 		ctx.fill();
 
-		// Kẽ đường chéo ở cuối
+		// Káº½ Ä‘Æ°á»ng chÃ©o á»Ÿ cuá»‘i
 		// Draw a slant at the end
 		ctx.beginPath();
 		if (!isUrl(line_color)) {
@@ -677,7 +698,7 @@ class RankCard {
 			ctx.stroke();
 		}
 
-		// Xóa nền vị trí đặt avatar
+		// XÃ³a ná»n vá»‹ trÃ­ Ä‘áº·t avatar
 		// Remove background of avatar placement
 		ctx.beginPath();
 		if (!isUrl(line_color))
@@ -685,12 +706,12 @@ class RankCard {
 		ctx.fill();
 		ctx.globalCompositeOperation = "destination-out";
 
-		// Xóa xung quanh sub card
+		// XÃ³a xung quanh sub card
 		// Remove around sub card
 		ctx.fillRect(0, 0, widthCard, alignRim);
 		ctx.fillRect(0, heightCard - alignRim, widthCard, alignRim);
 
-		// Xóa nền tại vị trí đặt thanh Exp
+		// XÃ³a ná»n táº¡i vá»‹ trÃ­ Ä‘áº·t thanh Exp
 		// Remove the background at the location where the Exp bar is located
 		const radius = 6 * percentage(heightCard);
 		const xStartExp = (25 + 1.5) * percentage(widthCard),
@@ -700,7 +721,7 @@ class RankCard {
 		ctx.globalCompositeOperation = "source-over";
 		centerImage(ctx, await Canvas.loadImage(avatar), xyAvatar, xyAvatar, resizeAvatar, resizeAvatar);
 
-		// Vẽ thanh Exp
+		// Váº½ thanh Exp
 		// Draw Exp bar
 		if (!isUrl(expNextLevel_color)) {
 			ctx.beginPath();
@@ -733,7 +754,7 @@ class RankCard {
 		}
 
 
-		// Exp hiện tại
+		// Exp hiá»‡n táº¡i
 		// Current Exp
 		const widthExpCurrent = (100 / expNextLevel * exp) * percentage(widthExp);
 		if (!isUrl(exp_color)) {
@@ -774,7 +795,7 @@ class RankCard {
 
 		ctx.textAlign = "end";
 
-		// Vẽ chữ Rank
+		// Váº½ chá»¯ Rank
 		// Draw rank text
 		ctx.font = autoSizeFont(18.4 * percentage(widthCard), maxSizeFont_Rank, rank, ctx, this.fontName);
 		const metricsRank = ctx.measureText(rank);
