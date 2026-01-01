@@ -1,128 +1,86 @@
-[
-    {
-        "key": "dbln",
-        "value": "%7B%2261586019051181%22%3A%22KsRPNIfp%22%2C%2261585795775016%22%3A%22Ax7LWZ6b%22%7D",
-        "domain": "facebook.com",
-        "path": "/login/device-based/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.697Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "datr",
-        "value": "NEdTaZjNuXI1lNDo6za8Z-EN",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "sb",
-        "value": "NUdTaWxHXzA0QTphYTZPB-dA",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "dpr",
-        "value": "2.075000047683716",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "locale",
-        "value": "en_GB",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "vpd",
-        "value": "v1%3B1014x520x2.075000047683716",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "ps_l",
-        "value": "1",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "ps_n",
-        "value": "1",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "pas",
-        "value": "61585480482616%3A6hPYp3FIFl%2C61586019051181%3AvAclgmtuWX%2C61585795775016%3AQtIV0S6Wwy",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "c_user",
-        "value": "61585795775016",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "fr",
-        "value": "0WBOWRsjsAJ50R1z0.AWcbtjuTjdjn3ElTQe88Mrf8o-AULj9F4E7eS0MLt6HevMs4oxQ.BpU0c1..AAA.0.0.BpVTqS.AWfLqCuctREcy-TqoTjXkNRNCuk",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "xs",
-        "value": "8%3AfHS9LQldc6QtrQ%3A2%3A1767193234%3A-1%3A-1",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "wl_cbv",
-        "value": "v2%3Bclient_version%3A3033%3Btimestamp%3A1767193422",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
-    },
-    {
-        "key": "fbl_st",
-        "value": "101738954%3BT%3A29453223",
-        "domain": "facebook.com",
-        "path": "/",
-        "hostOnly": false,
-        "creation": "2025-12-31T15:03:49.705Z",
-        "lastAccessed": "2025-12-31T15:03:49.705Z"
+const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
+const yts = require("yt-search");
+
+const CACHE = path.join(__dirname, "cache");
+if (!fs.existsSync(CACHE)) fs.mkdirSync(CACHE);
+
+module.exports = {
+  config: {
+    name: "sing",
+    version: "1.1",
+    author: "Aryan Chauhan",
+    role: 0,
+    category: "media",
+    guide: { en: "{pn} <song name>" }
+  },
+
+  onStart: async function ({ api, event, args }) {
+    if (!args.length)
+      return api.sendMessage(
+        "❌ Song name missing.",
+        event.threadID,
+        event.messageID
+      );
+
+    api.setMessageReaction("⏳", event.messageID, () => {}, true);
+
+    try {
+      const a = await b(args.join(" "));
+      const c = await d(a.url);
+      await e(api, event, a, c);
+    } catch (err) {
+      console.error(err);
+      api.setMessageReaction("❌", event.messageID, () => {}, true);
+      api.sendMessage(
+        "❌ Failed to play song.",
+        event.threadID,
+        event.messageID
+      );
     }
-]
+  }
+};
+
+async function b(q) {
+  const r = await yts(q);
+  if (!r.videos || !r.videos[0]) throw "No result";
+  return r.videos[0];
+}
+
+async function d(url) {
+  const apiUrl =
+    "https://downvid.onrender.com/api/v1/download" +
+    `?url=${encodeURIComponent(url)}&format=mp3`;
+
+  const r = await axios.get(apiUrl);
+  if (r.data.status !== "success" || !r.data.downloadUrl)
+    throw "API error";
+
+  return r.data.downloadUrl;
+}
+
+async function e(api, event, video, dl) {
+  const p = path.join(CACHE, `${Date.now()}.mp3`);
+  const s = await axios.get(dl, { responseType: "stream" });
+
+  const w = fs.createWriteStream(p);
+  s.data.pipe(w);
+
+  w.on("finish", async () => {
+    api.setMessageReaction("✅", event.messageID, () => {}, true);
+    await api.sendMessage(
+      {
+        body: `🎶 ${video.title}`,
+        attachment: fs.createReadStream(p)
+      },
+      event.threadID,
+      event.messageID 
+    );
+    fs.unlinkSync(p);
+  });
+
+  w.on("error", () => {
+    api.setMessageReaction("❌", event.messageID, () => {}, true);
+  });
+}
