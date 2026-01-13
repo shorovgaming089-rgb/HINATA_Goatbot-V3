@@ -3,7 +3,7 @@ module.exports = {
     name: "fork",
     aliases: ["repo", "link"],
     version: "1.0",
-    author: "Aphelion",
+    author: "sourav ahmed",
     countDown: 3,
     role: 0,
     longDescription: "Returns the link to the official, updated fork of the bot's repository.",
