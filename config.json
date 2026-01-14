@@ -13,7 +13,7 @@
   "checkApproval": true,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "Hinata",
+  "nickNameBot": "𝗘'𝘄𝗿 𝗛𝗶𝗻𝗮🌚💋",
   "prefix": ".",
   "adminOnly": {
     "enable": false,
@@ -39,7 +39,7 @@
     "how_it_work": "if you enable both whiteListMode and whiteListModeThread, the system will check if the user is in whiteListIds, then check if the thread is in whiteListThreadIds, if one of the conditions is true, the user can use the bot"
   },
   "database": {
-    "type": "mongoDB",
+    "type": "mongodb",
     "uriMongodb": "mongodb+srv://meherazchisty57_db_user:Ea7xGHjpp7BGm8aG@cluster0.yibwo6a.mongodb.net/?appName=Cluster0",
     "autoSyncWhenStart": false,
     "autoRefreshThreadInfoFirstTime": true,
