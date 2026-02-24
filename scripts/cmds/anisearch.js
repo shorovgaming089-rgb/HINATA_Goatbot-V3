@@ -1,78 +1,94 @@
-const axios = require('axios');
+const axios = require("axios");
 
 async function getStreamFromURL(url) {
-  const response = await axios.get(url, { responseType: 'stream' });
+  const response = await axios.get(url, { 
+    responseType: "stream",
+    timeout: 10000, 
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36'
+    }
+  });
   return response.data;
 }
 
-async function fetchTikTokVideos(query) {
+async function fetchAnime(query) {
   try {
-    const response = await axios.get(`https://mahi-apis.onrender.com/api/tiktok?search=${query}`);
-    return response.data.data;
-  } catch (error) {
-    console.error(error);
-    return null;
+    const endpoint = query
+      ? `https://toshiro-aniserarch.vercel.app/tiktok/search?query=${encodeURIComponent(query)}`
+      : `https://toshiro-aniserarch.vercel.app/tiktok/random`;
+
+    const res = await axios.get(endpoint);
+
+    if (query) return res.data?.list || [];
+    return res.data ? [res.data] : [];
+  } catch (e) {
+    console.error("API Fetch Error:", e.message);
+    return [];
   }
 }
 
 module.exports = {
   config: {
     name: "anisearch",
-    aliases: ["animeedit", "tiktoksearch"],
-    author: "Mahi--",
-    version: "2.1",
-    shortDescription: {
-      en: "Search for TikTok anime edit videos",
-    },
-    longDescription: {
-      en: "Search and fetch TikTok anime edit videos based on your query.",
-    },
-    category: "fun",
-    guide: {
-      en: "{p}{n} [query]",
-    },
+    aliases: ["ani", "anisrc"],
+    author: "Toshiro Editz ❄️",
+    version: "2.5",
+    shortDescription: { en: "Anime edit search or random" },
+    longDescription: { en: "Send random anime edit or search by keyword" },
+    category: "anime",
+    guide: { en: "{p}{n} [anime name]" },
   },
+
   onStart: async function ({ api, event, args }) {
-    api.setMessageReaction("✨", event.messageID, (err) => {}, true);
+    api.setMessageReaction("🔍", event.messageID, event.threadID, () => {}, true);
 
-    const query = args.join(' ');
+    const query = args.join(" ");
+    const videos = await fetchAnime(query);
 
-    if (!query) {
-      api.sendMessage({ body: "Please provide a search query." }, event.threadID, event.messageID);
-      return;
+    if (!videos.length) {
+      return api.sendMessage("No anime edits were found for your request.", event.threadID, event.messageID);
     }
 
-    // Append "anime edit" to the query
-    const modifiedQuery = `${query} anime edit`;
+    const v = videos[Math.floor(Math.random() * videos.length)];
 
-    const videos = await fetchTikTokVideos(modifiedQuery);
-
-    if (!videos || videos.length === 0) {
-      api.sendMessage({ body: `No videos found for query: ${query}.` }, event.threadID, event.messageID);
-      return;
+    let authorName = "Unknown Creator";
+    if (v.author) {
+      authorName = typeof v.author === 'object' ? (v.author.nickname || v.author.unique_id) : v.author;
     }
 
-    const selectedVideo = videos[Math.floor(Math.random() * videos.length)];
-    const videoUrl = selectedVideo.video;
-    const title = selectedVideo.title || "No title available";
+    // --- FIX: REMOVE HASHTAGS FROM TITLE ---
+    const rawTitle = v.title || "No Title Provided";
+    const title = rawTitle.replace(/#\w+/g, '').trim();
+
+    const videoUrl = v.video || v.play;
 
     if (!videoUrl) {
-      api.sendMessage({ body: 'Error: Video not found in the API response.' }, event.threadID, event.messageID);
-      return;
+      return api.sendMessage("Source URL is missing.", event.threadID, event.messageID);
     }
 
     try {
-      const videoStream = await getStreamFromURL(videoUrl);
+      const stream = await getStreamFromURL(videoUrl);
 
-      await api.sendMessage({
-        body: `🎥 Video Title: ${title}\n\nHere's the video you requested!`,
-        attachment: videoStream,
-      }, event.threadID, event.messageID);
-    } catch (error) {
-      console.error(error);
-      api.sendMessage({
-        body: 'An error occurred while processing the video.\nPlease try again later.',
-      }, event.threadID, event.messageID);
+      const msgBody = 
+        `❄️ 𝗧𝗶𝘁𝗹𝗲: ${title}\n` +
+        `👤 𝗔𝘂𝘁𝗵𝗼𝗿: ${authorName}\n` +
+        `🎐 𝗠𝗼𝗱𝗲: ${query ? "Search" : "Random"}\n\n` +
+        `𝗣𝗼𝘄𝗲𝗿𝗲𝗱 𝗯𝘆 𝗧𝗼𝘀𝗵𝗶𝗿𝗼 𝗘𝗱𝗶𝘁𝘇❄️`;
+
+      await api.sendMessage(
+        {
+          body: msgBody,
+          attachment: stream,
+        },
+        event.threadID,
+        event.messageID
+      );
+
+      api.setMessageReaction("✅", event.messageID, event.threadID, () => {}, true);
+
+    } catch (err) {
+      console.error("Download Error:", err.message);
+      api.sendMessage("⚠️ Unable to stream this video. Try again.", event.threadID, event.messageID);
     }
   },
 };
