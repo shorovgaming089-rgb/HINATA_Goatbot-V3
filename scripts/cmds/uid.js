@@ -160,7 +160,7 @@ module.exports = {
 
       // Name
       ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 80px Arial"; // Try sans-serif if font file missing
+      ctx.font = "bold 60px Arial"; // Try sans-serif if font file missing
       ctx.shadowColor = "#000000";
       ctx.shadowBlur = 10;
       ctx.fillText(username, 480, 200);
@@ -168,7 +168,7 @@ module.exports = {
 
       // UID Label
       ctx.fillStyle = "#00ffff";
-      ctx.font = "bold 40px Courier New";
+      ctx.font = "bold 35px Courier New";
       ctx.shadowColor = "#00ffff";
       ctx.shadowBlur = 15;
       ctx.fillText(`UID: ${targetID}`, 480, 270);
@@ -176,7 +176,7 @@ module.exports = {
 
       // System Text
       ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
-      ctx.font = "30px Courier New";
+      ctx.font = "25px Courier New";
       ctx.shadowBlur = 0;
       ctx.fillText("/// IDENTITY VERIFIED /// ", 480, 330);
       ctx.fillText("⚡ POWERED BY: HINA_BOT", 480, 370);
@@ -212,4 +212,4 @@ module.exports = {
       return api.sendMessage("❌ Error generating image. details: " + error.message, threadID, messageID);
     }
   }
-};
+}; 
